@@ -1,0 +1,37 @@
+services:
+  database:
+    image: postgres:16.4
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example_password
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    networks:
+      vo-network:
+        ipv4_address: 172.25.0.2
+    ports:
+      - 5432:5432
+
+  rabbitmq:
+    image: rabbitmq:management
+    networks:
+      vo-network:
+        ipv4_address: 172.25.0.3
+    ports:
+      - 15672:15672
+    volumes:
+      - rabbitm-data:/var/lib/rabbitmq/mnesia/
+
+networks:
+  vo-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.25.0.0/16
+
+volumes:
+  pg-data:
+    driver: local
+  rabbitm-data:
+    driver: local
