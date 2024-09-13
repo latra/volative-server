@@ -18,7 +18,7 @@ The backbone of the project is supported by various technologies and open-source
   <tr>
     <td style="text-align:center;">
       <a href="https://coqui.ai/">
-        <img src="https://img.shields.io/badge/Coqui_AI-white?style=for-the-badge">
+        <img src="https://img.shields.io/badge/Coqui_AI-black?style=for-the-badge">
       </a>
     </td>
     <td style="text-align:center;">
@@ -28,7 +28,7 @@ The backbone of the project is supported by various technologies and open-source
   <tr>
     <td style="text-align:center;">
       <a href="https://fastapi.tiangolo.com/">
-        <img src="https://img.shields.io/badge/Fast%20API-white?style=for-the-badge&logo=fastapi">
+        <img src="https://img.shields.io/badge/Fast%20API-grey?style=for-the-badge&logo=fastapi">
       </a>
     </td>
     <td style="text-align:center;">
@@ -38,7 +38,7 @@ The backbone of the project is supported by various technologies and open-source
   <tr>
     <td style="text-align:center;">
       <a href="https://es.react.dev/">
-        <img src="https://img.shields.io/badge/REACT-white?style=for-the-badge&logo=react">
+        <img src="https://img.shields.io/badge/REACT-black?style=for-the-badge&logo=react">
       </a>
     </td>
     <td style="text-align:center;">
@@ -48,7 +48,7 @@ The backbone of the project is supported by various technologies and open-source
   <tr>
     <td style="text-align:center;">
       <a href="https://www.rabbitmq.com/">
-        <img src="https://img.shields.io/badge/RabbitMQ-white?style=for-the-badge&logo=rabbitmq">
+        <img src="https://img.shields.io/badge/RabbitMQ-grey?style=for-the-badge&logo=rabbitmq">
       </a>
     </td>
     <td style="text-align:center;">
@@ -58,7 +58,7 @@ The backbone of the project is supported by various technologies and open-source
   <tr>
     <td style="text-align:center;">
       <a href="https://www.postgresql.org/">
-        <img src="https://img.shields.io/badge/Postgre_SQL-white?style=for-the-badge&logo=postgresql">
+        <img src="https://img.shields.io/badge/Postgre_SQL-black?style=for-the-badge&logo=postgresql">
       </a>
     </td>
     <td style="text-align:center;">
