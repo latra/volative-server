@@ -4,9 +4,12 @@ from enums import Roles
 import schemas, models, services.auth as auth
 from database import get_db
 from dependencies import get_current_user, get_current_admin_user
-from schemas import User, UserRoleCreate
+from schemas import User, UserRoleCreate, UserRoleBase
 from repository import ProjectRepository, UserRepository
-from exceptions import missing_query_parameters, incopatible_query_parameters, project_not_found, permission_exception, user_not_found, user_exists_at_project
+from exceptions import (missing_query_parameters, project_name_in_use, 
+                        incopatible_query_parameters, project_not_found, 
+                        permission_exception, user_not_found, user_exists_at_project,
+                        user_not_found_at_project)
 project_router = APIRouter()
 project_repository = ProjectRepository()
 user_repository = UserRepository()
@@ -22,9 +25,20 @@ def user_is_mod(db:  Session, user: User, project_uuid: str) -> bool:
 
 @project_router.post("/", response_model=schemas.ProjectResponse)
 def create_project(project: schemas.ProjectCreate, db: Session = Depends(get_db), admin_user: User = Depends(get_current_admin_user)):
+    exist_project = project_repository.get_project_by_name(db, project.name)
+    if exist_project:
+        raise project_name_in_use
     db_project = models.Project(name=project.name, description=project.description)
     project = project_repository.register_project(db, db_project)
     return schemas.ProjectResponse.model_validate(project)
+
+@project_router.delete("/{project_uuid}", status_code=status.HTTP_200_OK)
+def delete_project(project_uuid: str, db: Session = Depends(get_db), admin_user: User = Depends(get_current_admin_user)):
+    exist_project = project_repository.get_project_by_uuid(db, project_uuid)
+    if not exist_project:
+        raise project_not_found
+    project_repository.delete(db, exist_project)
+    return {}
 
 @project_router.post("/register", response_model=schemas.ProjectResponse)
 def register_user(register_request: UserRoleCreate, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
@@ -55,8 +69,32 @@ def register_user(register_request: UserRoleCreate, db: Session = Depends(get_db
     project_response.load_users(users)
     return project_response
 
+@project_router.post("/remove", response_model=schemas.ProjectResponse)
+def remove_user(register_request: UserRoleBase, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    if not user_is_mod(db, user, register_request.project_uuid):
+        raise permission_exception
+    project = project_repository.get_project_by_uuid(db, register_request.project_uuid)
+    if not project:
+        raise project_not_found
+    
+    
+    relation_exists = user_repository.get_user_in_project(db, register_request.project_uuid, register_request.user_uuid)
+    if not relation_exists:
+        raise user_not_found_at_project
+    
+    if relation_exists[1] == Roles.MODERATOR and not user.is_admin:
+        raise permission_exception
+    
+    project_repository.remove_user_to_project(db, register_request.project_uuid, register_request.user_uuid)
+    
+    project_response = schemas.ProjectResponse.model_validate(project)
+    users = project_repository.get_users_from_project(db, project.uuid)
+    project_response.load_users(users)
+    return project_response
+
+
 @project_router.get("/", response_model=schemas.ProjectResponse)
-def register_user(name: str = None, uuid: str = None, load_users: bool = False, db: Session = Depends(get_db)):
+def get_project(name: str = None, uuid: str = None, load_users: bool = False, db: Session = Depends(get_db)):
     if name is None and uuid is None:
         raise missing_query_parameters
     elif name and uuid:

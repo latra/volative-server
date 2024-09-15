@@ -1,4 +1,4 @@
-from sqlalchemy import insert, Sequence, Row, select, and_, update
+from sqlalchemy import insert, Sequence, Row, select, and_, update, delete
 
 from repository.base import BaseRepository
 from models import Project, user_project_role, User
@@ -43,6 +43,18 @@ class ProjectRepository(BaseRepository):
                 user_project_role.c.project_uuid == project_uuid
             )
             .values(role=new_role) 
+        )
+
+        session.execute(stmt)
+        session.commit()
+
+    def remove_user_to_project(self, session: Session, project_uuid, user_uuid, new_role) -> None:
+        stmt = (
+            delete(user_project_role)
+            .where(
+                user_project_role.c.user_uuid == user_uuid,
+                user_project_role.c.project_uuid == project_uuid
+            )
         )
 
         session.execute(stmt)

@@ -15,6 +15,10 @@ user_not_found = HTTPException(
             detail="User not found",
         )
 
+user_not_found_at_project = HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found at this project",
+        )
 user_exists_at_project = HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="This user is already registered on this project",
